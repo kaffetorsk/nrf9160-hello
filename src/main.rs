@@ -11,10 +11,10 @@ use {defmt_rtt as _, panic_probe as _};
 #[embassy_executor::main]
 async fn main(_spawner: Spawner) {
     let p = embassy_nrf::init(Default::default());
-    let mut led = Output::new(p.P0_28, Level::Low, OutputDrive::Standard);
+    let mut led = Output::new(p.P0_02, Level::Low, OutputDrive::Standard);
 
     defmt::println!("test");
-    defmt::info!("Hello World!");
+    defmt::warn!("Hello World!");
 
     loop {
         led.set_high();

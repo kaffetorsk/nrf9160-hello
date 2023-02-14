@@ -1,5 +1,9 @@
 Boilerplate for nrf9160
 
+https://github.com/embassy-rs/embassy
+https://github.com/diondokter/nrf-modem
+https://github.com/tweedegolf/nrf9160-rust-starter
+
 SPM must be installed on the nrf9160.
 
 pip3 install --user -U west
@@ -25,3 +29,8 @@ udevadm control --reload
 udevadm trigger
 
 cargo install cargo-embed
+
+cargo install probe-run --version 0.3.0
+
+Version can be updated when this is resolved and brought into probe-run:
+https://github.com/probe-rs/probe-rs/issues/1223
