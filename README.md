@@ -34,3 +34,6 @@ cargo install probe-run --version 0.3.0
 
 Version can be updated when this is resolved and brought into probe-run:
 https://github.com/probe-rs/probe-rs/issues/1223
+
+mqtt
+https://github.com/BlackbirdHQ/mqttrust/blob/master/mqttrust_core/examples/echo.rs

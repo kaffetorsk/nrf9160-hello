@@ -12,6 +12,8 @@ use embassy_time::{Duration, Timer};
 use nrf_modem::{SystemMode, ConnectionPreference, GnssData};
 use {defmt_rtt as _, panic_probe as _};
 use futures::stream::StreamExt;
+use embassy_nrf::nvmc::Nvmc;
+use embedded_storage::nor_flash::{NorFlash, ReadNorFlash};
 // use futures::try_join;
 
 #[embassy_executor::main]
@@ -25,6 +27,35 @@ async fn main(spawner: Spawner) {
     //try_join!(lte_init).unwrap();
     init_lte().await.unwrap();
 
+    info!("Hello NVMC!");
+
+    // probe-run breaks without this, I'm not sure why.
+    //Timer::after(Duration::from_secs(1)).await;
+
+    let mut f = Nvmc::new(p.NVMC);
+    const ADDR: u32 = 0x80000;
+
+    info!("Reading...");
+    let mut buf = [0u8; 4];
+    unwrap!(f.read(ADDR, &mut buf));
+    info!("Read: {=[u8]:x}", buf);
+
+    info!("Erasing...");
+    unwrap!(f.erase(ADDR, ADDR + 4096));
+
+    info!("Reading...");
+    let mut buf = [0u8; 4];
+    unwrap!(f.read(ADDR, &mut buf));
+    info!("Read: {=[u8]:x}", buf);
+
+    info!("Writing...");
+    unwrap!(f.write(ADDR, &[1, 2, 3, 4]));
+
+    info!("Reading...");
+    let mut buf = [0u8; 4];
+    unwrap!(f.read(ADDR, &mut buf));
+    info!("Read: {=[u8]:x}", buf);
+
     let response = nrf_modem::send_at::<64>("AT+CGMI").await.unwrap();
 
     println!("{:?}", response.as_str());
@@ -33,7 +64,12 @@ async fn main(spawner: Spawner) {
     if let Ok(mut stream) = gnss.start_continuous_fix(nrf_modem::GnssConfig::default()) {
         while let Some(Ok(loc)) = stream.next().await {
             match loc {
-                GnssData::PositionVelocityTime(p) => info!("lat: {} lon: {}", p.latitude, p.longitude),
+                //GnssData::PositionVelocityTime(p) => info!("lat: {} lon: {}", p.latitude, p.longitude),
+                GnssData::PositionVelocityTime(p) => info!(
+                    "{{
+                        \"coordinates\": [{}, {}]
+                    }}"
+                    , p.latitude, p.longitude),
                 GnssData::Nmea(n) => trace!("{:?}", n.as_str()),
                 GnssData::Agps(a) => trace!("AGPS"),
             }
