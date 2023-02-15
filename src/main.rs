@@ -68,10 +68,17 @@ async fn main(spawner: Spawner) {
                 GnssData::PositionVelocityTime(p) => info!(
                     "{{
                         \"coordinates\": [{}, {}]
-                    }}"
-                    , p.latitude, p.longitude),
-                GnssData::Nmea(n) => trace!("{:?}", n.as_str()),
-                GnssData::Agps(a) => trace!("AGPS"),
+                        \"speed\": {},
+                        \"heading\": {},
+                        \"accuracy\": {},
+                        \"lastfix\": {}-{}-{}T{}:{}:{}.{},
+                    }}",
+                    p.latitude, p.longitude, p.speed,
+                    p.heading, p.accuracy, p.datetime.year,
+                    p.datetime.month, p.datetime.day, p.datetime.hour,
+                    p.datetime.minute, p.datetime.seconds, p.datetime.ms
+                ),
+                _ => ()
             }
         }
     }
