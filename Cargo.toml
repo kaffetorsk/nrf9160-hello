@@ -7,17 +7,12 @@ version = "0.1.0"
 
 [features]
 default = ["nightly"]
-nightly = [
-    "embassy-executor/nightly",
-    "embassy-nrf/nightly",
-    "embassy-net/nightly",
-    "embassy-nrf/unstable-traits",
-    "embassy-usb",
-    "embedded-io/async",
-    "embassy-net",
-]
+nightly = ["embassy-executor/nightly", "embassy-nrf/nightly", "embassy-net/nightly", "embassy-nrf/unstable-traits", "embassy-usb", "embedded-io/async", "embassy-net"]
 
 [dependencies]
+nrf-modem = "0.2.0"
+tinyrlibc = { git = "https://github.com/rust-embedded-community/tinyrlibc", version = "0.3.0" }
+arrayvec = {version = "0.7.2", default-features = false}
 embassy-futures = "0.1.0"
 embassy-sync = { version = "0.1.0", features = [
     "defmt",
